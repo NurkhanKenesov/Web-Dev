@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from '../../interfaces/product.interface';
+import { Product } from '../../models/product.interface';
 
 @Component({
   selector: 'app-product-item',
@@ -8,11 +8,7 @@ import { Product } from '../../interfaces/product.interface';
   imports: [CommonModule],
   template: `
     <div class="product-card">
-      <img [src]="product.images[currentImageIndex]" [alt]="product.name">
-      <div class="gallery-nav" *ngIf="product.images.length > 1">
-        <button (click)="prevImage()">←</button>
-        <button (click)="nextImage()">→</button>
-      </div>
+      <img [src]="product.images[0]" [alt]="product.name">
       <h3>{{ product.name }}</h3>
       <p>{{ product.description }}</p>
       <div class="rating">Rating: {{ product.rating }}/5</div>
@@ -23,35 +19,34 @@ import { Product } from '../../interfaces/product.interface';
       <button (click)="onRemove()">Remove</button>
     </div>
   `,
-  styleUrls: ['./product-item.component.css']
+  styles: [`
+    .product-card {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 1rem;
+      border-radius: 8px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  `]
 })
 export class ProductItemComponent {
   @Input() product!: Product;
   @Output() remove = new EventEmitter<number>();
   @Output() like = new EventEmitter<number>();
-  
-  currentImageIndex = 0;
 
-  nextImage() {
-    this.currentImageIndex = (this.currentImageIndex + 1) % this.product.images.length;
-  }
-
-  prevImage() {
-    this.currentImageIndex = this.currentImageIndex === 0 
-      ? this.product.images.length - 1 
-      : this.currentImageIndex - 1;
+  onRemove() {
+    this.remove.emit(this.product.id);
   }
 
   onLike() {
     this.like.emit(this.product.id);
   }
 
-  onRemove() {
-    this.remove.emit(this.product.id);
-  }
-
   share(platform: 'whatsapp' | 'telegram') {
-    const url = encodeURIComponent(this.product.link);
+    const url = encodeURIComponent(this.product.kaspiLink);
     const text = encodeURIComponent(`Check out this product: ${this.product.name}`);
     
     if (platform === 'whatsapp') {

@@ -1,46 +1,70 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProductService } from './services/product.service';
+import { Category } from './models/product.interface';
 import { ProductListComponent } from './components/product-list/product-list.component';
-import { categories } from './data/categories';
-import { products } from './data/products';
-import { Category, Product } from './interfaces/product.interface';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ProductListComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProductListComponent
+  ],
   template: `
-    <h1>Online Store</h1>
-    
-    <nav class="categories">
-      @for (category of categories; track category.id) {
-        <button 
-          [class.active]="selectedCategory?.id === category.id"
-          (click)="selectCategory(category)"
+    <div class="container">
+      <h1>Online Store</h1>
+      
+      <nav class="categories">
+        <button
+          *ngFor="let category of categories"
+          (click)="selectCategory(category.id)"
+          [class.active]="selectedCategoryId === category.id"
         >
           {{ category.name }}
         </button>
-      }
-    </nav>
+      </nav>
 
-    @if (selectedCategory) {
-      <app-product-list [products]="filteredProducts" />
-    }
+      <app-product-list
+        *ngIf="selectedCategoryId"
+        [categoryId]="selectedCategoryId"
+      ></app-product-list>
+    </div>
   `,
-  styleUrls: ['./app.component.css']
+  styles: [`
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    .categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .categories button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .categories button.active {
+      background-color: #007bff;
+      color: white;
+    }
+  `]
 })
 export class AppComponent {
-  categories = categories;
-  products = products;
-  selectedCategory: Category | null = null;
+  categories: Category[] = [];
+  selectedCategoryId?: number;
 
-  get filteredProducts(): Product[] {
-    return this.selectedCategory
-      ? this.products.filter(p => p.categoryId === this.selectedCategory?.id)
-      : [];
+  constructor(private productService: ProductService) {
+    this.categories = this.productService.getCategories();
   }
 
-  selectCategory(category: Category) {
-    this.selectedCategory = category;
+  selectCategory(categoryId: number) {
+    this.selectedCategoryId = categoryId;
   }
 }
