@@ -1,0 +1,13 @@
+<head-component></head-component>
+<div class="py-4 px-6 border rounded flex items-center flex-col mb-2">
+  <div class="rounded bg-gray-100 p-[30px]">
+    <h1 class="text-lg font-bold">Categories</h1>
+    <ul>
+      <li *ngFor="let category of categories"><input type="checkbox" [checked]="category.choose" (change)="update(category)">{{category.type}}</li>
+    </ul>
+  </div>
+  <p>Number of likes: {{likes}}</p>
+  <hr>
+
+  <app-product-list [status]="show" (numLiked)="like($event)"> </app-product-list>
+</div>

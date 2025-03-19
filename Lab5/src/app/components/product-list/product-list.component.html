@@ -1,0 +1,34 @@
+
+  <div class="rounded " *ngFor="let product of products">
+    <div *ngIf="inList(product.category) && product.visible" class="block">
+      <img  [src]="product.image" alt="{{product.title}}" class="rounded-3xl mx-auto w-1/3 mb-2">
+      <h2 class="mb-2 text-lg text-center">{{product.title}}</h2>
+      <p>Price: <span class="font-bold">{{product.price | currency:'₸'}}</span></p>
+      <button class="border rounded py-2 px-4 "
+              (click)="details[product.id]=!details[product.id]"
+              [ngClass]="{
+              'bg-amber-400': !details[product.id],
+              'bg-blue-400': details[product.id]
+          }"
+      >
+        {{ details[product.id] ? "Hide" : "Show"}} details
+      </button>
+
+      <div *ngIf="details[product.id]" class="items-center flex flex-col">
+        <p [innerHTML]="product.characteristics">{{product.characteristics}}</p>
+        <p>Оценки: <span>
+      {{product.rating.rate | number:'1.2-3'}}</span></p>
+        <div class="border rounded p-2"><input type="checkbox" [checked]="product.liked" (change)="like(product)">Like</div>
+        <a href="{{product.link}}" class="border rounded py-2.5 px-5">Ссылка на продукт</a>
+        <button class="border rounded py-1.5 px-3 bg-blue-400" type="button" (click)="share(product.link)">
+          Поделиться в Telegram
+        </button>
+        <div class="border rounded py-1.5 px-3 bg-red-500"><button type="button" (click)="delete(product)">
+          Delete
+        </button>
+          <div>
+      </div>
+        </div>
+    </div>
+  </div>
+  </div>
